@@ -22,7 +22,11 @@ export default {
                 },
                 {
                     text: "Posted User",
-                    value: "created_user",
+                    value: "created_user_id",
+                },
+                {
+                    text: "Posted Date",
+                    value: "created_at",
                 },
                 {
                     text: "Operation",
@@ -45,7 +49,7 @@ export default {
     },
     mounted() {
         this.$axios
-            .get("/post/list")
+            .get("/post")
             .then((response) => {
                 this.postList = response.data;
                 this.showList = this.postList;

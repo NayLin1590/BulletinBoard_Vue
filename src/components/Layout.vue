@@ -5,17 +5,25 @@
         <v-container>
           <v-row>
             <v-toolbar-title class="title mr-2">
-              <span>{{ title }}</span>
+               <router-link :to="{ name: 'post-list' }" class="title-txt">
+                 {{ title }}
+               </router-link>
+              <!-- <span>{{ title }}</span> -->
             </v-toolbar-title>
-            <v-btn class="ma-2" text v-if="isLoggedIn">
-              Users
+            <v-btn class="ma-2" text v-if="isLoggedIn && userType == -1" :to="{ name: 'user-list' }">
+              Users 
             </v-btn>
-            <v-btn class="ma-2" text>
+            <v-btn class="ma-2" text :to="{ name: 'post-list' }">
               Posts
             </v-btn>
             <v-spacer></v-spacer>
+            <v-btn class="ma-2" text v-if="isLoggedIn && userType == -1"  :to="{ name: 'user-register' }">
+              Create User 
+            </v-btn>
             <div class="route-links">
+                
               <v-menu offset-y v-if="isLoggedIn">
+                  
                 <template v-slot:activator="{ on }">
                   <v-btn class="ma-2" text v-on="on">
                     {{ userName }}
