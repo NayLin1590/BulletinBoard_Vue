@@ -41,6 +41,9 @@
         <template v-slot:[`item.title`]="{ item }">
           <a v-if="item.title">{{ item.title }}</a>
         </template>
+        <template v-slot:[`item.create_user`]="{ item }">
+          {{ item.create_user.name }}
+        </template>
         <template v-slot:[`item.operation`]>
           <v-row>
             <div class="operation-btn">

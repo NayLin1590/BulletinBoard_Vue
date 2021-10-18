@@ -1,4 +1,5 @@
 import { mapGetters } from "vuex";
+import moment from "moment"
 export default {
     data() {
         return {
@@ -22,7 +23,7 @@ export default {
                 },
                 {
                     text: "Posted User",
-                    value: "created_user_id",
+                    value: "create_user",
                 },
                 {
                     text: "Posted Date",
@@ -51,6 +52,14 @@ export default {
         this.$axios
             .get("/post")
             .then((response) => {
+                response.data.filter((value,index)=>{
+                    response.data[index].created_at =  moment(String(response.data[index].created_at)).format(
+                        "MM/DD/YYYY"
+                      );
+                      response.data[index].updated_at =  moment(String(response.data[index].updated_at)).format(
+                        "MM/DD/YYYY"
+                      );
+                })
                 this.postList = response.data;
                 this.showList = this.postList;
             })

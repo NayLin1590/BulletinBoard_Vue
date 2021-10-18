@@ -1,8 +1,11 @@
 <template>
   <v-card>
+    
+    
     <v-card-title>
       User list
       <v-spacer></v-spacer>
+      <!-- filter section -->
       <v-form ref="form">
         <v-row class="filter-bar">
           <v-col cols="2.5">
@@ -87,15 +90,24 @@
         </v-row>
       </v-form>
     </v-card-title>
+    <!-- List section -->
     <v-container>
       <v-data-table :headers="headers" :items="showList">
-        <template v-slot:[`item.title`]="{ item }">
-          <a v-if="item.title">{{ item.title }}</a>
+        <template v-slot:[`item.name`]="{ item }">
+          <detail :userdetail='item'>{{ item.name }}</detail>
         </template>
-        <template v-slot:[`item.operation`]>
+        <template v-slot:[`item.create_user_id`]="{ item }">
+          {{ item.createdUser }}
+        </template>
+        <template v-slot:[`item.role`]="{ item }">
+          <span v-if="item.role == 0">Admin</span>
+          <span v-else>User</span>
+        </template>
+        <template v-slot:[`item.operation`]="{ item }">
           <v-row>
             <div class="operation-btn">
-              <v-btn color="error" class="post-list-btn">Delete</v-btn>
+              <deleteUser :deleteuser='item'/>
+              <!-- <v-btn color="error" v-on:click="remove(item)" class="post-list-btn">Delete</v-btn> -->
             </div>
           </v-row>
         </template>

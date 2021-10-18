@@ -1,9 +1,16 @@
-import { mapGetters } from "vuex";
+import { mapGetters } from "vuex"
+import detail from "../../pages/user/detail"
+import deleteUser from "../../pages/user/delete"
+import moment from "moment"
 export default {
+  components: {
+    detail,
+    deleteUser,
+  },
   data() {
     return {
       fromdate: null,
-      todate:null,
+      todate: null,
       menu: false,
       menu1: false,
       headerList: [
@@ -22,7 +29,7 @@ export default {
         },
         {
           text: "Created User",
-          value: "created_user_id",
+          value: "create_user_id",
         },
         {
           text: "Type",
@@ -55,10 +62,16 @@ export default {
       ],
       userList: [],
       showList: [],
+      i: 0,
+      removeUser: {
+        id: null,
+        deleted_at:null,
+        deleted_user_id: null,
+      },
     };
   },
   computed: {
-    ...mapGetters(["isLoggedIn"]),
+    ...mapGetters(["isLoggedIn", "userId"]),
     headers() {
       if (!this.isLoggedIn) {
         return this.headerList.slice(0, this.headerList.length - 1);
@@ -67,16 +80,11 @@ export default {
       }
     },
   },
+  beforeCreate() {
+    
+  },
   mounted() {
-    this.$axios
-      .get("/post")
-      .then((response) => {
-        this.userList = response.data;
-        this.showList = this.userList;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    this.getAllUser()
   },
   methods: {
     /**
@@ -92,5 +100,46 @@ export default {
         );
       });
     },
+
+    remove(user) {
+      if (confirm("Do you really want to delete?")) {
+        console.log(user)
+        this.removeUser.id = user.id;
+        this.removeUser.deleted_user_id = this.userId;
+        this.removeUser.deleted_at = moment(String(Date())).format(
+          "MM/DD/YYYY"
+        );
+        console.log(this.removeUser);
+        this.$axios
+          .patch("/user/remove", this.removeUser)
+          .then((data) => {
+            if(data){
+              this.getAllUser()
+            }
+          })
+          .catch((err) => console.log(err.response.data));
+      }
+    },
+
+
+    getAllUser(){
+      this.$axios
+      .get("/user")
+      .then((response) => {
+        this.userList = response.data;        
+        response.data.filter((value, index) => {
+          this.userList[index].created_at = moment(String(this.userList[index].created_at)).format(
+            "MM/DD/YYYY"
+          );
+          this.userList[index].updated_at = moment(String(this.userList[index].updated_at)).format(
+            "MM/DD/YYYY"
+          );
+        });
+        this.showList = this.userList;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
   },
 };
