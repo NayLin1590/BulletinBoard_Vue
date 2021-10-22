@@ -1,11 +1,13 @@
 import { mapGetters } from "vuex"
 import detail from "../../pages/user/detail"
 import deleteUser from "../../pages/user/delete"
+import Msg from "../../pages/user/Msg"
 import moment from "moment"
 export default {
   components: {
     detail,
     deleteUser,
+    Msg,
   },
   data() {
     return {
@@ -22,6 +24,7 @@ export default {
         {
           text: "Name",
           value: "name",
+          width: '100px'
         },
         {
           text: "Email",
@@ -30,48 +33,59 @@ export default {
         {
           text: "Created User",
           value: "create_user_id",
+          width: "150px",
         },
         {
           text: "Type",
           value: "role",
+          width: "100px",
         },
         {
           text: "Phone Number",
           value: "phone",
+          width: "140px",
         },
         {
           text: "Date of Birth",
           value: "dob",
+          width: "120px",
         },
         {
           text: "Address",
           value: "address",
+          width: "100px",
         },
         {
           text: "Created_Date",
           value: "created_at",
+          width: "11em",
         },
         {
           text: "Updated_Date",
           value: "updated_at",
+          width: "11em",
         },
         {
           text: "Operation",
           value: "operation",
+          width: "10em",
         },
       ],
       userList: [],
       showList: [],
-      i: 0,
       removeUser: {
         id: null,
         deleted_at:null,
         deleted_user_id: null,
       },
+      createAlertTxt:"New user creation is success...",
+      deleteAlertTxt:"User delete is success",
+      create:"create",
+      dele:"delete",
     };
   },
   computed: {
-    ...mapGetters(["isLoggedIn", "userId"]),
+    ...mapGetters(["isLoggedIn", "userId","userSuccessMsg","userDeleteMsg"]),
     headers() {
       if (!this.isLoggedIn) {
         return this.headerList.slice(0, this.headerList.length - 1);
@@ -81,10 +95,27 @@ export default {
     },
   },
   beforeCreate() {
-    
+    this.$axios
+      .get("/user")
+      .then((response) => {
+        this.userList = response.data;        
+        response.data.filter((value, index) => {
+          this.userList[index].created_at = moment(String(this.userList[index].created_at)).format(
+            "MM/DD/YYYY"
+          );
+          this.userList[index].updated_at = moment(String(this.userList[index].updated_at)).format(
+            "MM/DD/YYYY"
+          );
+        });
+        this.showList = this.userList;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
+  
   mounted() {
-    this.getAllUser()
+    // this.getAllUser()
   },
   methods: {
     /**
@@ -100,27 +131,6 @@ export default {
         );
       });
     },
-
-    remove(user) {
-      if (confirm("Do you really want to delete?")) {
-        console.log(user)
-        this.removeUser.id = user.id;
-        this.removeUser.deleted_user_id = this.userId;
-        this.removeUser.deleted_at = moment(String(Date())).format(
-          "MM/DD/YYYY"
-        );
-        console.log(this.removeUser);
-        this.$axios
-          .patch("/user/remove", this.removeUser)
-          .then((data) => {
-            if(data){
-              this.getAllUser()
-            }
-          })
-          .catch((err) => console.log(err.response.data));
-      }
-    },
-
 
     getAllUser(){
       this.$axios

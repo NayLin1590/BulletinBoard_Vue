@@ -80,30 +80,11 @@
             Date Of Birth
           </v-col>
           <v-col cols="6">
-            <!-- <v-menu
-            ref="menu"
-            v-model="menu"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          > -->
             <v-text-field
               v-model="createUserData.dob"
               readonly
               prepend-icon="mdi-calendar"
-            ></v-text-field>
-            <!-- <v-date-picker
-              v-model="createUserData.dob"
-              :max="
-                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-                  .toISOString()
-                  .substr(0, 10)
-              "
-              min="1990-01-01"
-              @change="$refs.menu.save(user.dob)"
-            ></v-date-picker> -->
-            <!-- </v-menu> -->
+            ></v-text-field>       
           </v-col>
         </v-row>
 
@@ -130,12 +111,12 @@
 
         <v-row>
           <v-col class="text-right">
-            <v-btn @click="cancelUserForm" class="mr-4">
+            <v-btn @click="cancelUserForm" class="mr-4 error">
               Cancel
             </v-btn>
           </v-col>
           <v-col>
-            <v-btn type="submit">
+            <v-btn type="submit" class="success">
               Confirm
             </v-btn>
           </v-col>

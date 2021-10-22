@@ -207,22 +207,21 @@
               </validation-provider>
             </v-col>
           </v-row>
-          <div :v-if="userValidateMsg">
-            <v-row v-for="(err, index) in userValidateMsg" :key="index">
-              <v-col cols="4" class="text-right"> {{ index }} : </v-col>
-              <v-col>
-                {{ err[0] }}
-              </v-col>
-            </v-row>
-          </div>
+          <v-row v-if="userValidateMsg">
+            <v-col>
+              <v-alert v-for="(value,index) in userValidateMsg" :key="index" color="red" type="error" elevation="3" text>
+              {{ index + " : "+value }}
+            </v-alert>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col class="text-right">
-              <v-btn @click="resetUserForm" type="reset" class="mr-4">
+              <v-btn @click="resetUserForm" type="reset" class="mr-4 error">
                 Reset
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn type="submit">
+              <v-btn type="submit" class="primary">
                 submit
               </v-btn>
             </v-col>
@@ -235,13 +234,13 @@
 
 <script src="../../services/user/user-register.js"></script>
 
-<style scoped>
+<style>
 .v-text-field {
   margin-top: 0;
   padding-top: 0;
 }
 .v-text-field input {
-  padding: 0;
+  padding: 4px;
 }
 .rq {
   color: red;

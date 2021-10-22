@@ -62,42 +62,48 @@ export default {
         name: "",
         email: "",
         password: "",
-        confirmPassword:"",
+        confirmPassword: "",
         role: "admin",
         phone: "",
         dob: null,
         address: "",
         profile: null,
-        create_user_id:null,
-        updated_user_id: null
+        create_user_id: null,
+        updated_user_id: null,
       },
-      confirm:'',
+      confirm: "",
       menu: false,
-      url:null
+      url: null,
     };
   },
   computed: {
-    ...mapGetters(["userId","createUserData","userValidateMsg"]),
-},
-beforeCreate(){
-  this.$store.state.userValidateMsg = null;
-},
-created(){
- if(this.createUserData){
-  this.userData = this.createUserData
-        this.$store.dispatch("cancelCreateUser")
- }
-},
-  methods:{
+    ...mapGetters(["userId", "createUserData", "userValidateMsg"]),
+  },
+  beforeCreate() {
+    this.$store.state.userValidateMsg = null;
+  },
+  created() {
+    if (this.createUserData) {
+      this.userData = this.createUserData;
+      this.$store.dispatch("cancelCreateUser");
+    }
     
-    submitUser(){
-      this.$refs.observer.validate()
-      this.userData.create_user_id = this.userId
-      this.userData.updated_user_id = this.userId
-      this.$store.dispatch("validateUser", this.userData)
+  },
+  mounted(){
+    
+   
+  },
+  methods: {
+    submitUser() {
+      this.$refs.observer.validate();
+      this.userData.create_user_id = this.userId;
+      this.userData.updated_user_id = this.userId;
+      
+      this.$store.dispatch("validateUser", this.userData);
+      
     },
-    resetUserForm(){     
-      this.$refs.observer.reset(); 
+    resetUserForm() {
+      this.$refs.observer.reset();
     },
-  }
+  },
 };

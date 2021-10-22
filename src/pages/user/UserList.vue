@@ -1,28 +1,39 @@
 <template>
   <v-card>
-    
-    
+    <div v-if="userSuccessMsg">
+      <Msg
+        :alertMsg="userSuccessMsg"
+        :alertTxt="createAlertTxt"
+        :msgCon="create"
+      ></Msg>
+    </div>
+    <div v-if="userDeleteMsg">
+      <Msg
+        :alertMsg="userDeleteMsg"
+        :alertTxt="deleteAlertTxt"
+        :msgCon="dele"
+      ></Msg>
+    </div>
     <v-card-title>
       User list
       <v-spacer></v-spacer>
-      <!-- filter section -->
       <v-form ref="form">
         <v-row class="filter-bar">
-          <v-col cols="2.5">
+          <v-col>
             <v-text-field
               class="search-txt-field"
               label="name"
               hide-details="auto"
             ></v-text-field>
           </v-col>
-          <v-col cols="2.5">
+          <v-col>
             <v-text-field
               class="search-txt-field"
               label="email"
               hide-details="auto"
             ></v-text-field>
           </v-col>
-          <v-col cols="2.5">
+          <v-col>
             <v-menu
               ref="menu"
               v-model="menu"
@@ -53,7 +64,7 @@
               </v-date-picker>
             </v-menu>
           </v-col>
-           <v-col cols="2.5">
+          <v-col>
             <v-menu
               ref="menu1"
               v-model="menu1"
@@ -94,7 +105,9 @@
     <v-container>
       <v-data-table :headers="headers" :items="showList">
         <template v-slot:[`item.name`]="{ item }">
-          <detail :userdetail='item'>{{ item.name }}</detail>
+          <div>
+            <detail :userdetail="item"></detail>
+          </div>
         </template>
         <template v-slot:[`item.create_user_id`]="{ item }">
           {{ item.createdUser }}
@@ -106,7 +119,7 @@
         <template v-slot:[`item.operation`]="{ item }">
           <v-row>
             <div class="operation-btn">
-              <deleteUser :deleteuser='item'/>
+              <deleteUser :deleteuser="item" :getAllUser="getAllUser" />
               <!-- <v-btn color="error" v-on:click="remove(item)" class="post-list-btn">Delete</v-btn> -->
             </div>
           </v-row>

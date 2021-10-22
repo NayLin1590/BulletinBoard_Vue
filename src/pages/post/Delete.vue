@@ -17,68 +17,46 @@
             ></v-toolbar
           >
           <v-card-text>
-            <p class="delete-txt pt-3 pl-2">Are you sure to delete User?</p>
+            <p class="delete-txt pt-3 pl-2">Are you sure to delete Post?</p>
             <div class="pl-5 ml-5">
               <v-row>
                 <v-col cols="5">
                   ID
                 </v-col>
                 <v-col cols="7">
-                  {{ deleteuser.id }}
+                  {{ deletepost.id }}
                 </v-col>
               </v-row>
 
               <v-row>
                 <v-col cols="5">
-                  Name
+                  Title
                 </v-col>
                 <v-col cols="7">
-                  {{ deleteuser.name }}
+                  {{ deletepost.title }}
                 </v-col>
               </v-row>
 
               <v-row>
                 <v-col cols="5">
-                  Type
+                  Description
                 </v-col>
                 <v-col cols="7">
-                  {{ role }}
+                  {{ deletepost.description }}
                 </v-col>
               </v-row>
 
               <v-row>
                 <v-col cols="5">
-                  Email
+                  Status
                 </v-col>
                 <v-col cols="7">
-                  {{ deleteuser.email }}
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col cols="5">
-                  Phone
-                </v-col>
-                <v-col cols="7">
-                  {{ deleteuser.phone }}
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col cols="5">
-                  Date Of Birth
-                </v-col>
-                <v-col cols="7">
-                  {{ deleteuser.dob }}
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col cols="5">
-                  Address
-                </v-col>
-                <v-col cols="7">
-                  {{ deleteuser.address }}
+                  <div v-if="deletepost.status == 1">
+                    Active
+                  </div>
+                  <div v-else>
+                    Inactive
+                  </div>
                 </v-col>
               </v-row>
             </div>
@@ -95,48 +73,41 @@
 
 <script>
 import { mapGetters } from "vuex";
-import moment  from "moment";
+// import moment  from "moment";
 export default {
-  props: ["deleteuser","getAllUser"],
+  props: ["deletepost", "getAllPost"],
   data() {
     return {
       dialog: false,
-      deleteUserData: {
+      deletePostData: {
         id: null,
         deleted_user_id: null,
         deleted_at: null,
       },
-      role: "",
     };
   },
   computed: {
     ...mapGetters(["userId"]),
   },
-  created(){
-  },
-  mounted() {
-    if (this.deleteuser.role == 0) {
-      this.role = "admin";
-    } else {
-      this.role = "user";
-    }
-  },
+  created() {},
+  mounted() {},
   methods: {
     remove() {
       if (confirm("Do you really want to delete?")) {
-        this.deleteUserData.id = this.deleteuser.id;
-        this.deleteUserData.deleted_user_id = this.userId;
-        this.deleteUserData.deleted_at = moment(String(Date())).format(
-          "MM/DD/YYYY"
-        );
-       
+        this.deletePostData.id = this.deletepost.id;
+        this.deletePostData.deleted_user_id = this.userId;
+        // this.deletePostData.deleted_at = moment(String(Date())).format(
+        //   "MM/DD/YYYY hh:mm"
+        // );
+        this.deletePostData.deleted_at = Date();
+
         this.$axios
-          .patch("/user/remove", this.deleteUserData)
+          .patch("/post/remove", this.deletePostData)
           .then((data) => {
             if (data) {
-              this.$store.dispatch("userDeleteMsg",true)
+              this.$store.dispatch("postDeleteMsg", true);
               this.dialog = false;
-              this.getAllUser();
+              this.getAllPost();
             }
           })
           .catch((err) => console.log(err.response.data));

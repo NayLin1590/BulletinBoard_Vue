@@ -1,6 +1,14 @@
 import { mapGetters } from "vuex";
 import moment from "moment"
+import Detail from "../../pages/post/Details"
+import Delete from "../../pages/post/Delete"
+import router from "../../router";
+// import detail from "../../pages/user/detail"
 export default {
+    components:{
+        Detail,
+        Delete
+    },
     data() {
         return {
             postInfo: null,
@@ -9,12 +17,8 @@ export default {
             isDeleteDialog: false,
             headerList: [
                 {
-                    text: "ID",
-                    align: "start",
-                    value: "id",
-                },
-                {
                     text: "Post Title",
+                    align: "start",
                     value: "title",
                 },
                 {
@@ -39,7 +43,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(["isLoggedIn"]),
+        ...mapGetters(["isLoggedIn","postSuccessMsg","postDeleteMsg","editPostMsg"]),
         headers() {
             if (!this.isLoggedIn) {
                 return this.headerList.slice(0, this.headerList.length - 1);
@@ -49,7 +53,24 @@ export default {
         },
     },
     mounted() {
-        this.$axios
+        this.getAllPost()
+    },
+    methods: {
+        /**
+         * This is to filter posts of datatable.
+         * @returns void
+         */
+        filterPosts() {
+            this.showList = this.postList.filter((post) => {
+                return (
+                    post.title.includes(this.keyword) ||
+                    post.description.includes(this.keyword) ||
+                    post.created_user.includes(this.keyword)
+                );
+            });
+        },
+        getAllPost(){
+            this.$axios
             .get("/post")
             .then((response) => {
                 response.data.filter((value,index)=>{
@@ -66,20 +87,12 @@ export default {
             .catch((err) => {
                 console.log(err);
             });
-    },
-    methods: {
-        /**
-         * This is to filter posts of datatable.
-         * @returns void
-         */
-        filterPosts() {
-            this.showList = this.postList.filter((post) => {
-                return (
-                    post.title.includes(this.keyword) ||
-                    post.description.includes(this.keyword) ||
-                    post.created_user.includes(this.keyword)
-                );
-            });
         },
+        edit(id){
+            this.$store.dispatch("postEditId",id);
+            router.push({
+                name: "post-edit"
+              })
+        }
     },
 };

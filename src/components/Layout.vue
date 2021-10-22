@@ -1,7 +1,7 @@
 <template>
-  <v-app>
-    <v-card color="lighten-4" flat height="200px" tile>
-      <v-toolbar dark color="primary" tile>
+   <v-app>
+    <v-card color="lighten-4" flat tile>
+      <v-app-bar dark color="primary" fixed>
         <v-container>
           <v-row>
             <v-toolbar-title class="title mr-2">
@@ -48,12 +48,13 @@
             </div>
           </v-row>
         </v-container>
-      </v-toolbar>
-      <v-container>
+      </v-app-bar>
+      <v-container class="mt-16 ">
         <router-view></router-view>
       </v-container>
     </v-card>
   </v-app>
+ 
 </template>
 
 <script src="../services/components/layout.js"></script>
