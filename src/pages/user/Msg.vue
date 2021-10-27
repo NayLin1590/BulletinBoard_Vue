@@ -28,7 +28,12 @@ export default {
       if(this.msgCon == "delete"){
         this.$store.dispatch("userDeleteMsg", false);
       }
-      
+      if(this.msgCon == "edit"){
+        this.$store.dispatch("userUpdateMsg", false)
+      }
+       if(this.msgCon == "change"){
+        this.$store.dispatch("changePasswordMsg", false)
+      }
     }, 3000);
   },
 }

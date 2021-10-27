@@ -84,7 +84,7 @@
               v-model="createUserData.dob"
               readonly
               prepend-icon="mdi-calendar"
-            ></v-text-field>       
+            ></v-text-field>
           </v-col>
         </v-row>
 
@@ -166,6 +166,7 @@ export default {
         "profile",
         this.createUserData.name + this.createUserData.profile.name
       );
+      formData.append("deleted_user_id",0)
       this.$store.dispatch("createUser", formData);
     },
     cancelUserForm() {

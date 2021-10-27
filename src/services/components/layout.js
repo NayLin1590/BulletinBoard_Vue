@@ -1,5 +1,6 @@
 import { mapGetters } from "vuex";
 import constants from "../../constants";
+import router from "../../router";
 
 export default {
     data() {
@@ -30,7 +31,9 @@ export default {
          * @returns void
          */
         showProfile() {
-            // TODO: do something
+            router.push({
+                name:"user-profile"
+            })
         },
     },
 };

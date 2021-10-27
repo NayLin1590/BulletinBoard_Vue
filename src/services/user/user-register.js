@@ -87,11 +87,8 @@ export default {
       this.userData = this.createUserData;
       this.$store.dispatch("cancelCreateUser");
     }
-    
   },
-  mounted(){
-    
-   
+  mounted(){  
   },
   methods: {
     submitUser() {

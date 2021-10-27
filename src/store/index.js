@@ -14,7 +14,11 @@ export default new Vuex.Store({
     createUserData: null,
     userSuccessMsg: false,
     userValidateMsg: null,
-    userDeleteMsg:false,
+    userDeleteMsg: false,
+    userUpdateMsg: false,
+    changePasswordMsg: false,
+    changePasswordValidateMsg:null,
+
     createPostData: null,
     postValidateMsg: null,
     postSuccessMsg: false,
@@ -22,7 +26,7 @@ export default new Vuex.Store({
     postEditId: null,
     editPostData: null,
     editPostValidateMsg: null,
-    editPostMsg: false
+    editPostMsg: false,
   },
 
   //   MUTATIONS
@@ -42,7 +46,17 @@ export default new Vuex.Store({
     setUserDeleteMsg(state, msg) {
       state.userDeleteMsg = msg;
     },
-    
+    setUserUpdateMsg(state, msg) {
+      state.userUpdateMsg = msg;
+    },
+    setChangePasswordMsg(state, msg){
+      state.changePasswordMsg =msg
+    },
+    setChangePasswordValidateMsg(state, msg){
+      state.changePasswordValidateMsg =msg
+    },
+
+    // Post Section
     setCreatePostData(state, data) {
       state.createPostData = data;
     },
@@ -55,18 +69,18 @@ export default new Vuex.Store({
     setPostDeleteMsg(state, msg) {
       state.postDeleteMsg = msg;
     },
-    setpostEditId(state, id){
-      state.postEditId = id
+    setpostEditId(state, id) {
+      state.postEditId = id;
     },
-    setEditPostData(state, data){
-      state.editPostData = data
+    setEditPostData(state, data) {
+      state.editPostData = data;
     },
-    setEditPostValidateMsg(state, data){
-      state.editPostValidateMsg = data
+    setEditPostValidateMsg(state, data) {
+      state.editPostValidateMsg = data;
     },
-    setEditPostMsg(state, msg){
-      state.editPostMsg = msg
-    }
+    setEditPostMsg(state, msg) {
+      state.editPostMsg = msg;
+    },
   },
 
   //   ACTIONS
@@ -94,9 +108,9 @@ export default new Vuex.Store({
         })
         .catch((err) => {
           commit("setUserValidateMsg", err.response.data);
-            setTimeout(() => {
-              commit("setUserValidateMsg", null);
-            }, 2000);
+          setTimeout(() => {
+            commit("setUserValidateMsg", null);
+          }, 2000);
         });
     },
 
@@ -119,11 +133,46 @@ export default new Vuex.Store({
     cancelCreateUser({ commit }) {
       commit("setCreateUserData", null);
     },
-    userSuccessMsg({commit},msg){
+
+    editUser({ commit }, userData) {
+      axios.patch("/user/edit", userData).then((data) => {
+        if (data) {
+          commit("setUserUpdateMsg", true);
+          router.push({
+            name: "user-list",
+          });
+        }
+      });
+    },
+    changePassword({ commit }, passwordData){
+      axios.post("/user/changePassword",passwordData)
+        .then(data=>{
+          if(data){
+            commit("setChangePasswordMsg", true)
+            router.push({
+              name: "user-list",
+            });
+          }
+        })
+        .catch(err=>{
+          commit("setChangePasswordValidateMsg",err.response.data)
+          setTimeout(() => {
+            commit("setChangePasswordValidateMsg",null)
+          }, 3000);
+        })
+    },
+
+    userSuccessMsg({ commit }, msg) {
       commit("setUserSuccessMsg", msg);
     },
-    userDeleteMsg({commit},msg){
+    userDeleteMsg({ commit }, msg) {
       commit("setUserDeleteMsg", msg);
+    },
+    userUpdateMsg({ commit }, msg) {
+      commit("setUserUpdateMsg", msg);
+    },
+    changePasswordMsg({ commit }, msg){
+      commit("setChangePasswordMsg", msg)
     },
 
     // post create section
@@ -168,15 +217,15 @@ export default new Vuex.Store({
     cancelCreatePost({ commit }) {
       commit("setCreatePostData", null);
     },
-    postDeleteMsg({ commit }, msg){
+    postDeleteMsg({ commit }, msg) {
       commit("setPostDeleteMsg", msg);
       setTimeout(() => {
         commit("setPostDeleteMsg", null);
       }, 3000);
     },
     // post edit section
-    postEditId({ commit }, id){
-      commit("setpostEditId",id)
+    postEditId({ commit }, id) {
+      commit("setpostEditId", id);
     },
     validateEditPost({ commit }, postData) {
       axios
@@ -197,7 +246,7 @@ export default new Vuex.Store({
           }, 2000);
         });
     },
-    saveEditPost({ commit }, editData){
+    saveEditPost({ commit }, editData) {
       axios
         .patch("/post/update", editData)
         .then((data) => {
@@ -205,10 +254,10 @@ export default new Vuex.Store({
             if (data) {
               commit("setEditPostMsg", true);
               setTimeout(() => {
-                commit("setEditPostMsg", null)
+                commit("setEditPostMsg", null);
               }, 3000);
               commit("setEditPostData", null);
-              commit("setpostEditId",null)
+              commit("setpostEditId", null);
               router.push({
                 name: "post-list",
               });
@@ -216,7 +265,7 @@ export default new Vuex.Store({
           }
         })
         .catch((err) => console.log(err));
-    }
+    },
   },
 
   //   GETTERS
@@ -255,9 +304,24 @@ export default new Vuex.Store({
         return state.userSuccessMsg;
       }
     },
-    userDeleteMsg:(state)=>{
-      if(state.userDeleteMsg){
-        return state.userDeleteMsg
+    userDeleteMsg: (state) => {
+      if (state.userDeleteMsg) {
+        return state.userDeleteMsg;
+      }
+    },
+    userUpdateMsg: (state) => {
+      if (state.userUpdateMsg) {
+        return state.userUpdateMsg;
+      }
+    },
+    changePasswordMsg: (state) => {
+      if (state.changePasswordMsg) {
+        return state.changePasswordMsg;
+      }
+    },
+    changePasswordValidateMsg:(state)=>{
+      if(state.changePasswordValidateMsg){
+        return state.changePasswordValidateMsg
       }
     },
     // --------------end----------------
@@ -288,17 +352,17 @@ export default new Vuex.Store({
         return state.postEditId;
       }
     },
-    editPostData: (state)=>{
-      if(state.editPostData){
-        return state.editPostData
+    editPostData: (state) => {
+      if (state.editPostData) {
+        return state.editPostData;
       }
     },
-    editPostValidateMsg: (state)=>{
-      return state.editPostValidateMsg
+    editPostValidateMsg: (state) => {
+      return state.editPostValidateMsg;
     },
-    editPostMsg:(state)=>{
-      return state.editPostMsg
-    }
+    editPostMsg: (state) => {
+      return state.editPostMsg;
+    },
     // --------------end----------------
   },
   plugins: [createPersistedState()],

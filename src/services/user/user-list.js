@@ -79,13 +79,17 @@ export default {
         deleted_user_id: null,
       },
       createAlertTxt:"New user creation is success...",
-      deleteAlertTxt:"User delete is success",
+      deleteAlertTxt:"User delete is success...",
+      updateAlertTxt:"User Profile Successfully Updated...",
+      changePasswordTxt: "Password is successfully Updated...",
+      change:"change",
       create:"create",
       dele:"delete",
+      edit:"edit"
     };
   },
   computed: {
-    ...mapGetters(["isLoggedIn", "userId","userSuccessMsg","userDeleteMsg"]),
+    ...mapGetters(["isLoggedIn", "userId","userSuccessMsg","userDeleteMsg","userUpdateMsg","changePasswordMsg"]),
     headers() {
       if (!this.isLoggedIn) {
         return this.headerList.slice(0, this.headerList.length - 1);

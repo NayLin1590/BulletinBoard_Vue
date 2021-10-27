@@ -2,12 +2,14 @@ import { mapGetters } from "vuex";
 import moment from "moment"
 import Detail from "../../pages/post/Details"
 import Delete from "../../pages/post/Delete"
+import Download from "../../pages/post/Download"
 import router from "../../router";
 // import detail from "../../pages/user/detail"
 export default {
     components:{
         Detail,
-        Delete
+        Delete,
+        Download
     },
     data() {
         return {

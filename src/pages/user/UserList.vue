@@ -14,6 +14,20 @@
         :msgCon="dele"
       ></Msg>
     </div>
+    <div v-if="userUpdateMsg">
+      <Msg
+        :alertMsg="userUpdateMsg"
+        :alertTxt="updateAlertTxt"
+        :msgCon="edit"
+      ></Msg>
+    </div>
+    <div v-if="changePasswordMsg">
+      <Msg
+        :alertMsg="changePasswordMsg"
+        :alertTxt="changePasswordTxt"
+        :msgCon="change"
+      ></Msg>
+    </div>
     <v-card-title>
       User list
       <v-spacer></v-spacer>

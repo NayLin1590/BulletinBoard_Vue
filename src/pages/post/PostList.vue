@@ -40,8 +40,11 @@
             <v-btn class="post-list-btn mr-4" to="post/create" color="primary"
               >Create</v-btn
             >
-            <v-btn class="post-list-btn mr-4" color="primary">Upload</v-btn>
-            <v-btn class="post-list-btn mr-4" color="primary">Download</v-btn>
+            <v-btn class="post-list-btn mr-4" to="post/upload" color="primary">Upload</v-btn>
+            <!-- <v-btn class="post-list-btn mr-4" color="primary">Download</v-btn> -->
+         
+              <Download/>
+            
           </v-col>
         </v-row>
       </v-form>
