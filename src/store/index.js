@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
 import router from "../router";
+import cookie from "vue-cookie"
 
 Vue.use(Vuex);
 
@@ -18,7 +19,8 @@ export default new Vuex.Store({
     userUpdateMsg: false,
     changePasswordMsg: false,
     changePasswordValidateMsg:null,
-
+    passwordResetMsg:false,
+    emailValidateMsg:null,
     createPostData: null,
     postValidateMsg: null,
     postSuccessMsg: false,
@@ -33,6 +35,9 @@ export default new Vuex.Store({
   mutations: {
     setUserData(state, userData) {
       state.user = userData;
+    },
+    setToken(state, token){
+      state.token = token
     },
     setCreateUserData(state, data) {
       state.createUserData = data;
@@ -54,6 +59,12 @@ export default new Vuex.Store({
     },
     setChangePasswordValidateMsg(state, msg){
       state.changePasswordValidateMsg =msg
+    },
+    setPasswordResetMsg(state, msg){
+      state.passwordResetMsg = msg
+    },
+    setEmailValidateMsg(state, msg){
+      state.emailValidateMsg = msg
     },
 
     // Post Section
@@ -87,7 +98,16 @@ export default new Vuex.Store({
   actions: {
     login({ commit }, credentials) {
       return axios.post("/auth/login", credentials).then(({ data }) => {
-        commit("setUserData", data);
+        let user = {
+          user:null
+        }
+        user.user = data.user
+        commit("setUserData", user);
+        if(!credentials.remember){
+          cookie.set("token", data.token)
+        }else{
+          cookie.set("token", data.token, { expires: 7 })
+        } 
       });
     },
     logout({ commit }) {
@@ -162,6 +182,24 @@ export default new Vuex.Store({
         })
     },
 
+    resetPassword({ commit }, email ){
+      axios.post("/user/resetPassword",email)
+        .then(data=>{
+          if(data){
+            // console.log(data)
+            commit("setPasswordResetMsg", true)
+            setTimeout(() => {
+              commit("setPasswordResetMsg", false)
+            }, 5000);
+            router.push({
+              name:"login"
+            })
+          }
+        })
+        .catch(err=> {
+          commit("setEmailValidateMsg",err.response.data)
+        })
+    },
     userSuccessMsg({ commit }, msg) {
       commit("setUserSuccessMsg", msg);
     },
@@ -322,6 +360,16 @@ export default new Vuex.Store({
     changePasswordValidateMsg:(state)=>{
       if(state.changePasswordValidateMsg){
         return state.changePasswordValidateMsg
+      }
+    },
+    passwordResetMsg:(state)=>{
+      if(state.passwordResetMsg){
+        return state.passwordResetMsg
+      }
+    },
+    emailValidateMsg:(state)=>{
+      if(state.emailValidateMsg){
+        return state.emailValidateMsg
       }
     },
     // --------------end----------------

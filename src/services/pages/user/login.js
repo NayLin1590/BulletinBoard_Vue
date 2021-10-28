@@ -1,10 +1,11 @@
+import { mapGetters } from "vuex";
 export default {
     data: () => ({
         valid: true,
         email: "",
         password: "",
         error: "",
-
+        remember: false,
         // validation rules for user email.
         emailRules: [
             value => !!value || "The email field is required.",
@@ -14,16 +15,20 @@ export default {
         // validation rules for password.
         pwdRules: [value => !!value || "The password field is required."]
     }),
+    computed:{
+        ...mapGetters(["passwordResetMsg"])
+    },
     methods: {
         /**
          * This to submit login form.
          * @returns void
          */
-        login() {
+        login() {         
             this.$store
                 .dispatch("login", {
                     email: this.email,
-                    password: this.password
+                    password: this.password,
+                    remember:this.remember
                 })
                 .then(() => {
                     this.error = "";
@@ -31,7 +36,7 @@ export default {
                 })
                 .catch(err => {
                     this.error = err.response.data.errors.message;
-                    console.log(err);
+                    console.log(this.error);
                 });
         }
     }

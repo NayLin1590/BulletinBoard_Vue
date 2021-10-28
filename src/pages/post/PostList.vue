@@ -21,20 +21,24 @@
     <v-alert v-if="editPostMsg" color="green" type="success" elevation="3" text>
       Post Successfully Edited...
     </v-alert>
+    <v-toolbar color="primary" dark>
+      Post List
+    </v-toolbar>
     <v-card-title>
-      Post list
       <v-spacer></v-spacer>
-      <v-form ref="form">
+      <v-form ref="form" @submit.prevent="filterPosts">
         <v-row class="filter-bar">
           <v-col cols="3">
             <v-text-field
               class="search-txt-field"
               label="Search keyword"
               hide-details="auto"
+              v-model="searchValue"
+              @change="filterPosts()  "
             ></v-text-field>
           </v-col>
           <v-col cols="2">
-            <v-btn class="post-list-btn mr-4" color="primary">Search</v-btn>
+            <v-btn class="post-list-btn mr-4" type="submit" color="primary">Search</v-btn>
           </v-col>
           <v-col v-if="isLoggedIn" cols="7">
             <v-btn class="post-list-btn mr-4" to="post/create" color="primary"

@@ -2,34 +2,10 @@
   <v-container>
     <v-card class="mx-auto" max-width="800px">
       <v-card-title class="primary white--text">
-        Change Password
+        Reset Password
       </v-card-title>
       <validation-observer ref="observer" v-slot="{ handleSubmit }">
-        <form @submit.prevent="handleSubmit(changePassword)">
-          <v-row>
-            <v-col cols="4" class="text-right">
-              Current Password <span class="rq">*</span>
-            </v-col>
-            <v-col cols="6">
-              <validation-provider
-                v-slot="{ errors }"
-                name="Current Password"
-                :rules="{
-                  required: true,
-                  max: 255,
-                }"
-              >
-                <v-text-field
-                  v-model="passwordData.currentpassword"
-                  :append-icon="showCurrent ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showCurrent = !showCurrent"
-                  :type="showCurrent ? 'text' : 'password'"
-                  :error-messages="errors"
-                ></v-text-field>
-              </validation-provider>
-            </v-col>
-          </v-row>
-
+        <form @submit.prevent="handleSubmit(resetPasswordUpdate)">
           <v-row>
             <v-col cols="4" class="text-right">
               New Password <span class="rq">*</span>
@@ -50,6 +26,7 @@
                   @click:append="show = !show"
                   :type="show ? 'text' : 'password'"
                   :error-messages="errors"
+                  autocomplete="false"
                 ></v-text-field>
               </validation-provider>
             </v-col>
@@ -74,15 +51,15 @@
                   @click:append="show1 = !show1"
                   :type="show1 ? 'text' : 'password'"
                   :error-messages="errors"
+                  autocomplete="false"
                 ></v-text-field>
               </validation-provider>
             </v-col>
           </v-row>
-
-          <v-row v-if="changePasswordValidateMsg">
+          <v-row v-if="errMsg">
             <v-col>
               <v-alert
-                v-for="(value, index) in changePasswordValidateMsg"
+                v-for="(value, index) in errMsg"
                 :key="index"
                 color="red"
                 type="error"
@@ -93,10 +70,11 @@
               </v-alert>
             </v-col>
           </v-row>
+
           <v-row>
             <v-col class="text-right">
               <v-btn
-                @click="cancelChangePassword"
+                @click="cancelResetPassword"
                 type="reset"
                 class="mr-4 secondary"
               >
@@ -116,7 +94,7 @@
 </template>
 
 <script>
-import { required, max, min, is } from "vee-validate/dist/rules";
+import { required, min, is } from "vee-validate/dist/rules";
 import { extend, ValidationObserver, ValidationProvider } from "vee-validate";
 import { mapGetters } from "vuex";
 import router from "../../router";
@@ -128,10 +106,6 @@ extend("is", {
   ...is,
   message: "Password and Password Confirmantion is not match",
 });
-extend("max", {
-  ...max,
-  message: "{_field_} may not be greater than {length} characters",
-});
 extend("min", {
   ...min,
   message: "{_field_} may not be greater than {length} characters",
@@ -141,35 +115,82 @@ export default {
     ValidationProvider,
     ValidationObserver,
   },
+  beforeCreate() {
+    // console.log(this.$route.query.id)
+  },
   computed: {
-    ...mapGetters(["userId", "changePasswordValidateMsg"]),
+    ...mapGetters(["userId"]),
   },
-  mounted() {
-    this.passwordData.id = this.userId;
-  },
+  mounted() {},
   data() {
     return {
       showCurrent: false,
       show: false,
       show1: false,
       passwordData: {
-        id: null,
-        currentpassword: null,
+        token: null,
         newpassword: null,
         confirmpassword: null,
+        id:null,
       },
+      userData: {
+        email: null,
+      },
+      errMsg: null,
     };
   },
   methods: {
-    changePassword() {
-      // console.log(this.passwordData)
+    resetPasswordUpdate() {
       this.$refs.observer.validate();
+
+      this.passwordData.token = this.$route.query.id;
+
+      this.$axios
+        .post("user/resetPasswordData", this.passwordData)
+        .then((data) => {
+          this.userData.email = data.data.email;
+          if (this.userData.email != null) {
+            this.$axios
+              .get(`user/email?email=${this.userData.email}`)
+              .then((data) => {
+                if(data){
+                  this.passwordData.id = data.data.id
+                  this.$axios.post("/user/updatePassword",this.passwordData
+                  )
+                    .then(data=>{
+                      if(data){
+                        router.push({
+                          name:"login"
+                        })
+                      }
+                    })
+                    .catch(err=>{
+                      console.log(err)
+                    })
+                }
+              })
+              .catch((err) => {
+                this.errMsg = err.response.data;
+                setTimeout(() => {
+                  this.errMsg = null;
+                }, 5000);
+              });
+          } else {
+            console.log(this.userData.email);
+          }
+        })
+        .catch((err) => {
+          this.errMsg = err.response.data;
+          setTimeout(() => {
+            this.errMsg = null;
+          }, 5000);
+        });
+
       // this.$store.dispatch("changePassword", this.passwordData);
-      this.$store.dispatch("changePassword", this.passwordData);
     },
-    cancelChangePassword() {
+    cancelResetPassword() {
       router.push({
-        name: "profile-edit",
+        name: "post-list",
       });
     },
   },

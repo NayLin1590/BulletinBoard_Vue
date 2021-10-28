@@ -6,6 +6,7 @@ import store from "./store";
 import axios from "axios";
 import moment from "moment";
 import vuetify from "./plugins/vuetify";
+import cookie from "vue-cookie"
 
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
@@ -16,6 +17,11 @@ new Vue({
     store,
     vuetify,
     render: (h) => h(App),
+    beforeCreate(){
+        if(!cookie.get("token")){
+            store.state.user = null
+        }
+    },
     /**
      * This is to set token to any request to server side.
      * @returns Resquest with configurations
@@ -23,12 +29,18 @@ new Vue({
     created() {
         axios.interceptors.request.use(
             function (config) {
-                if (store.state.user) {
-                    // const tokenType = store.state.user.data.token_type;
+                // if (store.state.token) {
+                //     // const tokenType = store.state.user.data.token_type;
+                    
+                //     const tokenType = "Bearer"
+                //     const token = store.state.token;
+                //     if (token) config.headers.Authorization = `${tokenType} ${token}`;
+                // }
                     const tokenType = "Bearer"
-                    const token = store.state.user.token;
+                    const token = cookie.get("token") ;
                     if (token) config.headers.Authorization = `${tokenType} ${token}`;
-                }
+                
+                    
                 return config;
             },
             function (error) {

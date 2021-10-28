@@ -28,16 +28,20 @@
         :msgCon="change"
       ></Msg>
     </div>
+    <v-toolbar color="primary" dark>
+      User List
+    </v-toolbar>
     <v-card-title>
-      User list
       <v-spacer></v-spacer>
-      <v-form ref="form">
+      <v-form ref="form" @submit.prevent="filterUsers">
         <v-row class="filter-bar">
           <v-col>
             <v-text-field
               class="search-txt-field"
               label="name"
               hide-details="auto"
+              v-model="search.name"
+              @change="filterUsers"
             ></v-text-field>
           </v-col>
           <v-col>
@@ -45,6 +49,8 @@
               class="search-txt-field"
               label="email"
               hide-details="auto"
+              v-model="search.email"
+              @change="filterUsers"
             ></v-text-field>
           </v-col>
           <v-col>
@@ -63,6 +69,7 @@
                   label="From"
                   prepend-icon="mdi-calendar"
                   readonly
+                  clearable
                   v-bind="attrs"
                   v-on="on"
                 ></v-text-field>
@@ -96,12 +103,13 @@
                   readonly
                   v-bind="attrs"
                   v-on="on"
+                  clearable
                 ></v-text-field>
               </template>
               <v-date-picker v-model="todate" no-title scrollable>
                 <v-spacer></v-spacer>
                 <v-btn text color="primary" @click="menu1 = false">
-                  Cancel
+                  Clear
                 </v-btn>
                 <v-btn text color="primary" @click="$refs.menu1.save(todate)">
                   OK
@@ -110,7 +118,7 @@
             </v-menu>
           </v-col>
           <v-col cols="2">
-            <v-btn class="post-list-btn mr-4" color="primary">Search</v-btn>
+            <v-btn class="post-list-btn mr-4" type="submit" color="primary">Search</v-btn>
           </v-col>
         </v-row>
       </v-form>

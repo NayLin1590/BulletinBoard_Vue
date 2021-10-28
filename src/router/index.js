@@ -8,6 +8,8 @@ import UserConfirm from "../pages/user/UserConfirm";
 import Profile from "../pages/user/Profile";
 import Edit from "../pages/user/Edit";
 import ChangePassword from "../pages/user/ChangePassword";
+import ResetPassword from "../pages/user/ResetPassword";
+import ResetPasswordUpdated from "../pages/user/ResetPasswordUpdate";
 
 import PostList from "../pages/post/PostList";
 import PostCreate from "../pages/post/PostCreate";
@@ -55,6 +57,17 @@ const routes = [
     path: "/user/change",
     name: "change-password",
     component: ChangePassword,
+  },
+
+  {
+    path: "/login/reset",
+    name: "reset-password",
+    component: ResetPassword,
+  },
+  {
+    path: "/login/forget-password-update",
+    name: "reset-password-update",
+    component: ResetPasswordUpdated,
   },
   {
     path: "/post",
@@ -108,11 +121,17 @@ router.beforeEach((to, from, next) => {
   const editPostData = store.getters.editPostData;
   const userType = store.getters.userType;
 
-  if (!loggedIn && to.name != "login" && to.name != "post-list") {
+  if (
+    !loggedIn &&
+    to.name != "login" &&
+    to.name != "post-list" &&
+    to.name != "reset-password" &&
+    to.name != "reset-password-update"
+  ) {
     return next("/login");
   }
   next();
-  if (loggedIn && to.name == "login") {
+  if (loggedIn && (to.name == "login" || to.name == "reset-password" ||  to.name =="reset-password-update")) {
     return next("/post");
   }
   next();
@@ -127,10 +146,10 @@ router.beforeEach((to, from, next) => {
   if (loggedIn && to.name == "user-register" && userType == 1) {
     return next("/login");
   }
-//   next();
-//   if (!loggedIn && to.name == "user-profile") {
-//     return next("/login");
-//   }
+  //   next();
+  //   if (!loggedIn && to.name == "user-profile") {
+  //     return next("/login");
+  //   }
   next();
   if (!loggedIn && to.name == "post-create") {
     return next("/login");

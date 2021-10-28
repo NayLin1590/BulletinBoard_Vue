@@ -1,4 +1,6 @@
-import { mapGetters } from "vuex"
+import {
+  mapGetters
+} from "vuex"
 import detail from "../../pages/user/detail"
 import deleteUser from "../../pages/user/delete"
 import Msg from "../../pages/user/Msg"
@@ -15,8 +17,7 @@ export default {
       todate: null,
       menu: false,
       menu1: false,
-      headerList: [
-        {
+      headerList: [{
           text: "ID",
           align: "start",
           value: "id",
@@ -75,21 +76,26 @@ export default {
       showList: [],
       removeUser: {
         id: null,
-        deleted_at:null,
+        deleted_at: null,
         deleted_user_id: null,
       },
-      createAlertTxt:"New user creation is success...",
-      deleteAlertTxt:"User delete is success...",
-      updateAlertTxt:"User Profile Successfully Updated...",
+      createAlertTxt: "New user creation is success...",
+      deleteAlertTxt: "User delete is success...",
+      updateAlertTxt: "User Profile Successfully Updated...",
       changePasswordTxt: "Password is successfully Updated...",
-      change:"change",
-      create:"create",
-      dele:"delete",
-      edit:"edit"
+      change: "change",
+      create: "create",
+      dele: "delete",
+      edit: "edit",
+      search: {
+        name: null,
+        email: null
+      }
+
     };
   },
   computed: {
-    ...mapGetters(["isLoggedIn", "userId","userSuccessMsg","userDeleteMsg","userUpdateMsg","changePasswordMsg"]),
+    ...mapGetters(["isLoggedIn", "userId", "userSuccessMsg", "userDeleteMsg", "userUpdateMsg", "changePasswordMsg"]),
     headers() {
       if (!this.isLoggedIn) {
         return this.headerList.slice(0, this.headerList.length - 1);
@@ -102,7 +108,7 @@ export default {
     this.$axios
       .get("/user")
       .then((response) => {
-        this.userList = response.data;        
+        this.userList = response.data;
         response.data.filter((value, index) => {
           this.userList[index].created_at = moment(String(this.userList[index].created_at)).format(
             "MM/DD/YYYY"
@@ -117,43 +123,88 @@ export default {
         console.log(err);
       });
   },
-  
+
   mounted() {
     // this.getAllUser()
   },
   methods: {
+    localizeDate(date) {
+      if (!date || !date.includes('-')) return date
+      const [yyyy, mm, dd] = date.split('-')
+      return new Date(`${mm}/${dd}/${yyyy}`)
+    },
     /**
      * This is to filter posts of datatable.
      * @returns void
      */
-    filterPosts() {
-      this.showList = this.userList.filter((post) => {
-        return (
-          post.title.includes(this.keyword) ||
-          post.description.includes(this.keyword) ||
-          post.created_user.includes(this.keyword)
-        );
-      });
-    },
+    filterUsers() {
+      let startdate = this.localizeDate(this.fromdate)
+      let enddate  = this.localizeDate(this.todate)
+      
 
-    getAllUser(){
-      this.$axios
-      .get("/user")
-      .then((response) => {
-        this.userList = response.data;        
-        response.data.filter((value, index) => {
-          this.userList[index].created_at = moment(String(this.userList[index].created_at)).format(
-            "MM/DD/YYYY"
-          );
-          this.userList[index].updated_at = moment(String(this.userList[index].updated_at)).format(
-            "MM/DD/YYYY"
+      if(this.search.name && this.search.email && startdate && enddate){
+        this.showList = this.userList.filter((user) => {
+          const createdDate = new Date(user.created_at)
+          return (
+            user.name.toLowerCase().includes(this.search.name.toLowerCase()) &&
+            user.email.toLowerCase().includes(this.search.email.toLowerCase()) &&
+            startdate <= createdDate && createdDate <= enddate
           );
         });
-        this.showList = this.userList;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    }
+      }
+      else if(this.search.name){
+        this.showList = this.userList.filter((user) => {
+          return (
+            user.name.toLowerCase().includes(this.search.name.toLowerCase())
+          );
+        });
+      }else if(this.search.email){
+        this.showList = this.userList.filter((user) => {
+          return (
+            user.email.toLowerCase().includes(this.search.email.toLowerCase())
+          );
+        });
+      }else if(startdate && !enddate){
+        this.showList = this.userList.filter((user) => {
+          const createdDate = new Date(user.created_at)
+          return startdate <= createdDate;
+        });
+      }else if(!startdate && enddate){
+        this.showList = this.userList.filter((user) => {
+          const createdDate = new Date(user.created_at)
+          return createdDate <= enddate;
+        });
+      }else if(startdate && enddate){
+
+        this.showList = this.userList.filter((user) => {
+          const createdDate = new Date(user.created_at)
+          return startdate <= createdDate && createdDate <= enddate; 
+        });
+      }
+      else {
+        this.showList = this.userList
+      }
+      
+    },
+
+    getAllUser() {
+      this.$axios
+        .get("/user")
+        .then((response) => {
+          this.userList = response.data;
+          response.data.filter((value, index) => {
+            this.userList[index].created_at = moment(String(this.userList[index].created_at)).format(
+              "MM/DD/YYYY"
+            );
+            this.userList[index].updated_at = moment(String(this.userList[index].updated_at)).format(
+              "MM/DD/YYYY"
+            );
+          });
+          this.showList = this.userList;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
 };

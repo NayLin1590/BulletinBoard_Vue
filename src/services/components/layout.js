@@ -1,6 +1,7 @@
 import { mapGetters } from "vuex";
 import constants from "../../constants";
 import router from "../../router";
+import cookie from "vue-cookie"
 
 export default {
     data() {
@@ -17,6 +18,7 @@ export default {
          * @returns void
          */
         logout() {
+            cookie.delete("token")
             this.$store
                 .dispatch("logout")
                 .then(() => {
